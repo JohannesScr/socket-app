@@ -31,12 +31,14 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('new_message', bc_welcome_body);
 
     // listener
-    socket.on('create_message', (message) => {
+    socket.on('create_message', (message, callback) => {
         console.log('Create message', message);
         let update_message = generate_message(message.from, message.text);
 
         // global emitter
         io.emit('new_message', update_message);
+        callback({text: 'this is from the server'});
+
         // socket.broadcast.emit('new_message', update_message);
     });
 

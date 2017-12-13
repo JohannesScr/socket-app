@@ -4,7 +4,8 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
-const server_settings_service = require('./server.settings');
+const {log_url} = require('./server.settings');
+const {generate_message} = require('./utils/message');
 
 const public_path = path.join(__dirname, '../public');
 const PORT = process.env.PORT || 3000;
@@ -14,39 +15,25 @@ let server = http.createServer(app); // or let server = http.createServer((req, 
 let io = socketIO(server);
 
 app.use(express.static(public_path));
-app.use(server_settings_service.log_url);
+app.use(log_url);
 
 io.on('connection', (socket) => {
     console.log('New user connected');
 
-    let welcome_body = {
-        from: 'admin',
-        text: 'Welcome to the chat app',
-        created_at: new Date().toISOString()
-    };
+    let welcome_body = generate_message('admin', 'Welcome to the chat app');
 
     // emitter to current socket
     socket.emit('new_message', welcome_body);
 
-    let bc_welcome_body = {
-        from: 'admin',
-        text: 'A new user has joined',
-        created_at: new Date().toISOString()
-    };
+    let bc_welcome_body = generate_message('admin', 'A new user has joined');
 
-    // gloal emitter except for current socket
+    // global emitter except for current socket
     socket.broadcast.emit('new_message', bc_welcome_body);
-
-    //
 
     // listener
     socket.on('create_message', (message) => {
         console.log('Create message', message);
-        let update_message = {
-            from: message.from,
-            text: message.text,
-            created_at: new Date().toISOString()
-        };
+        let update_message = generate_message(message.from, message.text);
 
         // global emitter
         io.emit('new_message', update_message);

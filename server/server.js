@@ -24,13 +24,19 @@ io.on('connection', (socket) => {
         text: 'Hey, I like pie',
         created_at: new Date().toISOString()
     };
-    
+
     // emitter
     socket.emit('new_message', body);
 
     // listener
     socket.on('create_message', (message) => {
         console.log('Create message', message);
+        let update_message = {
+            from: message.from,
+            text: message.text,
+            created_at: new Date().toISOString()
+        };
+        io.emit('new_message', update_message);
     });
 
     // listener

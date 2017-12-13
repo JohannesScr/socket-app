@@ -1,6 +1,6 @@
 let {expect, assert} = require('chai');
 
-let {generate_message} = require('./message');
+let {generate_message, generate_location_message} = require('./message');
 
 describe('generate_message', () => {
     it('should generate a message body', () => {
@@ -14,6 +14,23 @@ describe('generate_message', () => {
             from,
             text
         });
-        expect(message.created_at).to.be.a('string');
+        expect(message.created_at).to.be.a('number');
+    });
+});
+
+describe('generate_location_message', () => {
+    it('should generate correct location object', () => {
+        let latitude = -33;
+        let longitude = 19;
+        let from = 'location';
+
+        let location = generate_location_message(from, latitude, longitude);
+
+        expect(location).to.be.a('object');
+        expect(location).to.deep.include({
+            from,
+            url: `https://www.google.com/maps?q=${latitude},${longitude}`
+        });
+        expect(location.created_at).to.be.a('number');
     });
 });

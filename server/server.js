@@ -5,7 +5,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const {log_url} = require('./server.settings');
-const {generate_message} = require('./utils/message');
+const {generate_message, generate_location_message} = require('./utils/message');
 
 const public_path = path.join(__dirname, '../public');
 const PORT = process.env.PORT || 3000;
@@ -32,14 +32,21 @@ io.on('connection', (socket) => {
 
     // listener
     socket.on('create_message', (message, callback) => {
-        console.log('Create message', message);
         let update_message = generate_message(message.from, message.text);
 
         // global emitter
         io.emit('new_message', update_message);
-        callback({text: 'this is from the server'});
+        callback({text: 'server received'});
 
         // socket.broadcast.emit('new_message', update_message);
+    });
+
+    // listener
+    socket.on('create_location_message', (coords) => {
+        let location_message = generate_location_message('location', coords.latitude, coords.longitude);
+
+        // global emitter
+        io.emit('new_location_message', location_message);
     });
 
     // listener

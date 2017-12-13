@@ -3,13 +3,13 @@ var socket = io();
 socket.on('connect', function() {
     console.log('Connected to server');
 
-    var body = {
-        from: 'jen@example.com',
-        text: 'I prefer burgers'
-    };
-
-    // emitter
-    socket.emit('create_message', body);
+    // var body = {
+    //     from: 'jen@example.com',
+    //     text: 'I prefer burgers'
+    // };
+    //
+    // // emitter
+    // socket.emit('create_message', body);
 });
 
 socket.on('disconnect', function() {

@@ -19,14 +19,25 @@ app.use(server_settings_service.log_url);
 io.on('connection', (socket) => {
     console.log('New user connected');
 
-    let body = {
-        from: 'mike@emaple.com',
-        text: 'Hey, I like pie',
+    let welcome_body = {
+        from: 'admin',
+        text: 'Welcome to the chat app',
         created_at: new Date().toISOString()
     };
 
-    // emitter
-    socket.emit('new_message', body);
+    // emitter to current socket
+    socket.emit('new_message', welcome_body);
+
+    let bc_welcome_body = {
+        from: 'admin',
+        text: 'A new user has joined',
+        created_at: new Date().toISOString()
+    };
+
+    // gloal emitter except for current socket
+    socket.broadcast.emit('new_message', bc_welcome_body);
+
+    //
 
     // listener
     socket.on('create_message', (message) => {
@@ -36,7 +47,10 @@ io.on('connection', (socket) => {
             text: message.text,
             created_at: new Date().toISOString()
         };
+
+        // global emitter
         io.emit('new_message', update_message);
+        // socket.broadcast.emit('new_message', update_message);
     });
 
     // listener

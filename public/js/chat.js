@@ -81,7 +81,6 @@ jQuery('#message-form').on('submit', function (event) {
     var message_text_box = jQuery('[name=message]');
 
     var message = {
-        from: 'User',
         text: message_text_box.val()
     };
 
@@ -119,7 +118,7 @@ function send_location() {
         alert('Unable to fetch location');
         location_button.removeAttribute('disabled');
         location_button.innerText = 'Send location';
-    })
+    });
 }
 
 // location_button.on('click', function() {

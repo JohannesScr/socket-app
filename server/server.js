@@ -54,10 +54,14 @@ io.on('connection', (socket) => {
 
     // listener
     socket.on('create_message', (message, callback) => {
-        let update_message = generate_message(message.from, message.text);
+        let user = users.get_user(socket.id);
 
-        // global emitter
-        io.emit('new_message', update_message);
+        if (user && is_real_string(message.text)) {
+            // global emitter
+            let update_message = generate_message(user.name, message.text);
+            io.to(user.room).emit('new_message', update_message);
+        }
+
         callback({text: 'server received'});
 
         // socket.broadcast.emit('new_message', update_message);
@@ -65,10 +69,14 @@ io.on('connection', (socket) => {
 
     // listener
     socket.on('create_location_message', (coords) => {
-        let location_message = generate_location_message('location', coords.latitude, coords.longitude);
+        let user = users.get_user(socket.id);
 
-        // global emitter
-        io.emit('new_location_message', location_message);
+        if (user) {
+            let location_message = generate_location_message(`${user.name}'s location`, coords.latitude, coords.longitude);
+
+            // global emitter
+            io.to(user.room).emit('new_location_message', location_message);
+        }
     });
 
     // listener

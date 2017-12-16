@@ -1,4 +1,4 @@
-let {expect, assert} = require('chai');
+let {expect} = require('chai');
 
 let {generate_message, generate_location_message} = require('./message');
 
